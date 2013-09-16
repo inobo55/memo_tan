@@ -44,7 +44,7 @@ class Database{
 		return $result;
 	}
 
-	public function selectFromMmoTan(){
+	public function selectFromMemoTan(){
 
 		$sql = "SELECT * FROM `chrome`.`memo_tan`;";
 		$link = $this->mysqlConnect();
