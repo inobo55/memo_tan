@@ -21,6 +21,8 @@ ReqeustController.prototype = {
 
 			if(this.responseText.indexOf('<ItemID>') != -1){
 
+				//if SearchDicItemResultのXMLが返ってきたとき
+
 				//参考URL: http://memopad.bitter.jp/w3c/dom/dom_httprequest.html
 				x = req.responseXML.getElementsByTagName('ItemID');
 				itemID = x[0].childNodes[0].nodeValue;
@@ -33,6 +35,8 @@ ReqeustController.prototype = {
 
 			}else if(this.responseText.indexOf('<GetDicItemResult') != -1){
 
+				// if GetDicItemResultのXMLが返ってきたとき
+
 				var imi = req.responseXML.getElementsByTagName('div')[2].childNodes[0].nodeValue;
 
 				var local_url = 'http://localhost:8888/chrome/memo_tan/API/memo_tan.php?tango=' + encodeURIComponent(_selectionText) + '&imi=' + imi;
@@ -40,10 +44,42 @@ ReqeustController.prototype = {
 				console.log(_selectionText);
 
 				window.PC = new ReqeustController(local_url,_selectionText);
+			}else if(this.responseText.indexOf('SearchDicItemResult') != -1){
+
+				/* if TotalHitCountが０だった場合とは、
+					1.[able],[ables],[s],[ed],[ied],[ing],[or]が語尾に付いていて、判定できなかった。
+					2.もともと、そんな語はない。
+					3.専門用語か、俗語。
+				*/
+				var s = _selectionText;
+				if(!( s = checkText(s) ))
+					return;
+
+				var search_url = "http://public.dejizo.jp/NetDicV09.asmx/SearchDicItemLite?Dic=EJdict&Word=" + encodeURIComponent(s)+"&Scope=HEADWORD&Match=STARTWITH&Merge=AND&Prof=XHTML&PageSize=1&PageIndex=0";
+
+				window.PC = new ReqeustController(search_url,_selectionText+'@');
+
 			}
 		}
 	}
 };
+
+function myIndexOf(text,str){
+	var str_len = str.length*(-1);
+	if(text.indexOf(str,str_len) != -1)
+		return str.length;
+	return false;
+}
+function checkText(text){
+	var array = ['ables','able','ied','ing','ed','or','s'];
+	for(var str in array){
+		if(str_length = myIndexOf(text,str)){
+			return substr(text,(-1)*str_length,str_length);
+		}
+	}
+	return false;
+}
+
 
 chrome.contextMenus.create({
 	"title":"【 %s 】をメモタンに渡す",
