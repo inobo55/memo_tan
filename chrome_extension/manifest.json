@@ -1,0 +1,15 @@
+{
+	"name":"MemoTan",
+	"version":"0.1",
+	"manifest_version":2,
+	"description":"This is chrome extension app for memoring english word. While reading english article, user can memory words to learn english. Also, afer reading, this app enable user to realize some words what you memoried.",
+	"permissions": [
+		"tabs", "http://*/*", "contextMenus"
+	],
+	"icons": {
+		"16":"icon16.png"
+	},
+	"background":{
+		"scripts":["background.js"]
+	}
+}
