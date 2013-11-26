@@ -49,11 +49,18 @@ ReqeustController.prototype = {
 				/* if TotalHitCountが０だった場合とは、
 					1.[able],[ables],[s],[ed],[ied],[ing],[or]が語尾に付いていて、判定できなかった。
 					2.もともと、そんな語はない。
-					3.専門用語か、俗語。
+					3.専門用語か、俗語などの辞書にない語。
 				*/
 				var s = _selectionText;
-				if(!( s = checkText(s) ))
+				if(!( s = checkText(s) )){
+					//パターン3のとき
+					//検索は辞めて単語だけ保存。意味は保存しない。
+					var imi = '';
+					var local_url = 'http://localhost:8888/chrome/memo_tan/API/memo_tan.php?tango=' + encodeURIComponent(_selectionText) + '&imi=' + imi;
+
+					window.PC = new RequestController(local_url,_selectionText);
 					return;
+				}
 
 				var search_url = "http://public.dejizo.jp/NetDicV09.asmx/SearchDicItemLite?Dic=EJdict&Word=" + encodeURIComponent(s)+"&Scope=HEADWORD&Match=STARTWITH&Merge=AND&Prof=XHTML&PageSize=1&PageIndex=0";
 
@@ -70,6 +77,7 @@ function myIndexOf(text,str){
 		return str.length;
 	return false;
 }
+
 function checkText(text){
 	var array = ['ables','able','ied','ing','ed','or','s'];
 	for(var str in array){
@@ -90,7 +98,6 @@ chrome.contextMenus.create({
 		var search_url = "http://public.dejizo.jp/NetDicV09.asmx/SearchDicItemLite?Dic=EJdict&Word=" + encodeURIComponent(info.selectionText) +"&Scope=HEADWORD&Match=STARTWITH&Merge=AND&Prof=XHTML&PageSize=1&PageIndex=0";
 
 		window.PC = new ReqeustController(search_url,info.selectionText);
-
 
 	}
 });

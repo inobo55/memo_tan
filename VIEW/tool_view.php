@@ -36,9 +36,13 @@ class View{
 				<tr>
 					<td>".$row['id']."</td>
 					<td>".$row['tango']."</td>
-					<td>".$row['imi']."</td>
-				</tr>
-			  ");
+					");
+			if(strcasecmp('',$row['imi']) === 0)
+				echo "<td><input type='text'><input type='submit' class='button'></td>";
+			else
+				echo "<td>".$row['imi']."</td>";
+			
+			echo "</tr>";
 		}
 
 		print_r("</table");
